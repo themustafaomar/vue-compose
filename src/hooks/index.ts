@@ -99,7 +99,7 @@ export function useComposeContext(name: string, options: ComposeContextOptions) 
   const ctx = inject<Context | null>(USE_MODAL_KEY, null)
 
   if (ctx == null) {
-    throw new Error('Did you use `useModal` composable in the parent component?')
+    throw new Error('Did you use `useCompose` composable in the parent component?')
   }
 
   const title = computed(() => {
