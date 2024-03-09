@@ -10,10 +10,10 @@ This package is here to make the life much easier by extracting these states, th
 
 ## Installation
 
-Follow these steps to quickly install `vuecompose` into your project, in this example we're using npm.
+Follow these steps to quickly install `vue-use-compose` into your project, in this example we're using npm.
 
 ```
-npm install vuecompose
+npm install vue-use-compose
 ```
 
 ## Quick Usage
@@ -33,7 +33,7 @@ Let's say we have a users list page and we have a nice button to create user and
 </template>
 
 <script setup>
-import { useCompose } from 'vuecompose'
+import { useCompose } from 'vue-use-compose'
 import Modal from './Modal.vue'
 
 const { create } = useCompose()
@@ -53,7 +53,7 @@ Let's define our dialog, and get the active state from `useComposeContext` compo
 </template>
 
 <script setup>
-import { useComposeContext } from 'vuecompose'
+import { useComposeContext } from 'vue-use-compose'
 
 const { active } = useComposeContext('user', {
   // 
@@ -106,7 +106,7 @@ The `useCompose` composable provides a set of useful functions you can use to fu
 </template>
 
 <script setup>
-import { useCompose } from 'vuecompose'
+import { useCompose } from 'vue-use-compose'
 import Modal from './Modal.vue'
 
 const { open, close, toggle, create, edit } = useCompose({
@@ -139,7 +139,7 @@ And we have access to a set of useful states we can rely on:
 </template>
 
 <script setup>
-import { useComposeContext } from 'vuecompose'
+import { useComposeContext } from 'vue-use-compose'
 
 const { active, creating, updating, data, title, action } = useComposeContext('user', {
   // Default options, feel free modify them, you may want to handle localization for example.
