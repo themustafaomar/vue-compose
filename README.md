@@ -40,7 +40,7 @@ const { create } = useCompose()
 </script>
 ```
 
-Let's define our dialog, and get the active state from `useComposeContext` composable.
+Let's define our dialog, and get the active state from `defineCompose` composable.
 
 @/components/users/ManageDialog.vue
 
@@ -53,9 +53,9 @@ Let's define our dialog, and get the active state from `useComposeContext` compo
 </template>
 
 <script setup>
-import { useComposeContext } from 'vue-use-compose'
+import { defineCompose } from 'vue-use-compose'
 
-const { active } = useComposeContext('user', {
+const { active } = defineCompose('user', {
   // 
 })
 </script>
@@ -139,9 +139,9 @@ And we have access to a set of useful states we can rely on:
 </template>
 
 <script setup>
-import { useComposeContext } from 'vue-use-compose'
+import { defineCompose } from 'vue-use-compose'
 
-const { active, creating, updating, data, title, action } = useComposeContext('user', {
+const { active, creating, updating, data, title, action } = defineCompose('user', {
   // Default options, feel free modify them, you may want to handle localization for example.
   createTitle: `Create %`,
   updateTitle: `Edit %`,
