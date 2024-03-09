@@ -1,69 +1,118 @@
-import { ref, computed,provide, inject, type Ref } from 'vue'
+import {
+  ref,
+  computed,provide,
+  inject,
+  type Ref,
+  type MaybeRef
+} from 'vue'
 
 const VUE_COMPOSE_CTX_KEY = Symbol('VComposeCtx')
 
 export interface ComposeOptions {
-  detachOnClose: boolean
+  detachOnClose?: boolean
 }
 
-export function useCompose(options: ComposeOptions) {
-  const { detachOnClose = true } = options
-  const active = ref(false)
-  const creating = ref(true)
-  const updating = ref(false)
-  const data = ref(null)
-  const ctx = {
-    active,
-    creating,
-    updating,
-    data,
-  }
+interface Context {
+  active: Ref<boolean>
+  creating: Ref<boolean>
+  updating: Ref<boolean>
+  data: Ref<boolean>
+}
 
-  provide(VUE_COMPOSE_CTX_KEY, ctx)
+interface Registery extends Context {
+  __name: string
+}
+
+type Instance = string | Context
+
+export function useCompose(options: ComposeOptions = {}) {
+  const { detachOnClose = true } = options
+  const registery: Ref<Registery[]> = ref([])
+
+  provide(VUE_COMPOSE_CTX_KEY, {
+    register: (name: string, states: Context) => {
+      registery.value.push({
+        __name: name,
+        ...states,
+      })
+    }
+  })
 
   // API
 
-  function open() {
-    _setActive(true)
+  function open(name: string) {
+    _setActive(_findInstance(name), true)
   }
 
-  function close() {
-    _setActive()
-    _setUpdating()
+  function close(name: string) {
+    const instance = _findInstance(name)
+    _setActive(instance, false)
+    _setUpdating(instance)
     if (detachOnClose)
-      _setData()
+      _setData(instance)
   }
 
-  function create(_data: any) {
-    open()
-    _setData(_data)
-    _setUpdating()
-    creating.value = true
+  function create(name: string, data: any) {
+    const instance = _findInstance(name)
+    _setActive(instance, true)
+    _setData(instance, data)
+    _setUpdating(instance)
+    _setCreating(instance, true)
   }
 
-  function edit(_data: any) {
-    open()
-    _setUpdating(true)
-    _setData(_data)
-    creating.value = false
+  function edit(name: string, _data: any) {
+    const instance = _findInstance(name)
+    _setActive(instance, true)
+    _setUpdating(instance, true)
+    _setData(instance, _data)
+    _setCreating(instance)
   }
 
-  function toggle() {
-    active.value ? close() : open()
+  function toggle(name: string) {
+    const instance = _findInstance(name)
+    instance.active ? close(name) : open(name)
   }
 
   // Private
 
-  function _setActive(state = false) {
-    active.value = state
+  function _setActive(instance: Instance, state: boolean = false) {
+    if (instance == 'string') {
+      _findInstance(instance).active = state
+    } else {
+      // @ts-ignore
+      instance.active = state
+    }
   }
 
-  function _setUpdating(state = false) {
-    updating.value = state
+  function _setUpdating(instance: Instance, state: boolean = false) {
+    if (instance == 'string') {
+      _findInstance(instance).updating = state
+    } else {
+      // @ts-ignore
+      instance.updating = state
+    }
   }
 
-  function _setData(_data: any = undefined) {
-    data.value = _data
+  function _setCreating(instance: Instance, state: boolean = false) {
+    if (instance == 'string') {
+      _findInstance(instance).creating = state
+    } else {
+      // @ts-ignore
+      instance.creating = state
+    }
+  }
+
+  function _setData(instance: Instance, data: any = undefined) {
+    if (instance == 'string') {
+      _findInstance(instance).data = data
+    } else {
+      // @ts-ignore
+      instance.data = data
+    }
+  }
+
+  function _findInstance(name: string): MaybeRef {
+    return registery.value.find(({ __name }) => __name === name)
   }
 
   return {
@@ -75,7 +124,7 @@ export function useCompose(options: ComposeOptions) {
   }
 }
 
-export interface ComposeContextOptions {
+export interface DefineComposeOptions {
   createTitle?: string
   updateTitle?: string
   createAction?: string
@@ -83,31 +132,40 @@ export interface ComposeContextOptions {
 }
 
 interface Context {
-  active: Ref<boolean>
-  creating: Ref<boolean>
-  updating: Ref<boolean>
-  data: Ref<any>
+  register: Function
 }
 
-export function useComposeContext(name: string, options: ComposeContextOptions) {
+export function defineCompose(name: string, options: DefineComposeOptions = {}) {
   const {
     createTitle = `Create %`,
     updateTitle = `Edit %`,
     createAction = 'Save',
     updateAction = 'Save changes',
   } = options
-  const ctx = inject<Context | null>(VUE_COMPOSE_CTX_KEY, null)
+  const active = ref(false)
+  const creating = ref(true)
+  const updating = ref(false)
+  const data = ref(null)
+  const ctx = {
+    active,
+    creating,
+    updating,
+    data,
+  }
+  const compose = inject<Context | null>(VUE_COMPOSE_CTX_KEY, null)
 
-  if (ctx == null) {
+  if (compose == null) {
     throw new Error('Did you use `useCompose` composable in the parent component?')
   }
 
+  compose.register(name, ctx)
+
   const title = computed(() => {
-    return _normalize(name, ctx.creating.value, 'title')
+    return _normalize(name, creating.value, 'title')
   })
 
   const action = computed(() => {
-    return _normalize(name, ctx.creating.value, 'action')
+    return _normalize(name, creating.value, 'action')
   })
 
   // Private

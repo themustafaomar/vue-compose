@@ -1,6 +1,6 @@
 export {
   useCompose,
-  useComposeContext,
+  defineCompose,
   type ComposeOptions,
-  type ComposeContextOptions
+  type DefineComposeOptions,
 } from './hooks'
