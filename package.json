@@ -1,0 +1,33 @@
+{
+  "name": "vuecompose",
+  "private": true,
+  "version": "0.0.0-alpha.1",
+  "type": "module",
+  "files": [
+    "dist",
+    "types",
+    "README.md",
+    "LICENCE"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "vue": "^3.4.19"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.4",
+    "typescript": "^5.2.2",
+    "vite": "^5.1.4",
+    "vue-tsc": "^1.8.27"
+  },
+  "types": "./types/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/vue-composer.js",
+      "require": "./dist/vue-composer.umd.cjs"
+    }
+  }
+}
