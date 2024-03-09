@@ -1,6 +1,6 @@
 import { ref, computed,provide, inject, type Ref } from 'vue'
 
-const USE_MODAL_KEY = Symbol('ModalContext')
+const VUE_COMPOSE_CTX_KEY = Symbol('VComposeCtx')
 
 export interface ComposeOptions {
   detachOnClose: boolean
@@ -19,7 +19,7 @@ export function useCompose(options: ComposeOptions) {
     data,
   }
 
-  provide(USE_MODAL_KEY, ctx)
+  provide(VUE_COMPOSE_CTX_KEY, ctx)
 
   // API
 
@@ -96,7 +96,7 @@ export function useComposeContext(name: string, options: ComposeContextOptions) 
     createAction = 'Save',
     updateAction = 'Save changes',
   } = options
-  const ctx = inject<Context | null>(USE_MODAL_KEY, null)
+  const ctx = inject<Context | null>(VUE_COMPOSE_CTX_KEY, null)
 
   if (ctx == null) {
     throw new Error('Did you use `useCompose` composable in the parent component?')
