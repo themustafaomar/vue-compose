@@ -25,7 +25,7 @@ Let's say we have a users list page and we have a nice button to create user and
 ```vue
 <template>
   ...
-  <button @click="create">Create user</button>
+  <button @click="create('user')">Create user</button>
   ...
 
   <!-- Dialog for creating or editing the users -->
@@ -55,6 +55,7 @@ Let's define our dialog, and get the active state from `defineCompose` composabl
 <script setup>
 import { defineCompose } from 'vue-use-compose'
 
+// defineCompose must take a unique identifier.
 const { active } = defineCompose('user', {
   // 
 })
@@ -81,24 +82,24 @@ Of course that's not everything! let's see a full example at the next section.
 
 The `useCompose` composable provides a set of useful functions you can use to fully control the dialog/popup/sidebar without headache.
 
-| Function  | Description |
-| ------------- | ------------- |
-| `open`   | Setting `active` state with `true` |
-| `close`  | Setting `active` state with `false` |
-| `toggle` | Switches open and close functions |
-| `create` | Setting `active` state with `true` and marks `creating` state with `true` |
-| `edit`   | Setting `active` state with `true` and marks `updating` state with `true` |
+| Function  | Description | Parameters |
+| ------------- | ------------- | --------- |
+| `open`   | Setting `active` state with `true` | String `id` |
+| `close`  | Setting `active` state with `false` | String `id` |
+| `toggle` | Switches open and close functions | String `id` |
+| `create` | Setting `active` state with `true` and marks `creating` state with `true` | String `id`, any? `payload` |
+| `edit`   | Setting `active` state with `true` and marks `updating` state with `true` | String `id`, any? `payload` |
 
 @/pages/users.vue
 
 ```vue
 <template>
   ...
-  <button @click="create">Create user</button>
+  <button @click="create('user')">Create user</button>
   ...
 
   ...
-  <button @click="edit(USER_TO_EDIT)">Edit user</button>
+  <button @click="edit('user', USER_TO_EDIT)">Edit user</button>
   ...
 
   <!-- Dialog for creating or editing the users -->
