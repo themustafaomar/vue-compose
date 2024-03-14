@@ -52,7 +52,7 @@ export function useCompose(options: ComposeOptions = {}) {
       _setData(instance)
   }
 
-  function create(name: string, data: any) {
+  function create(name: string, data?: any) {
     const instance = _findInstance(name)
     _setActive(instance, true)
     _setData(instance, data)
@@ -60,11 +60,11 @@ export function useCompose(options: ComposeOptions = {}) {
     _setCreating(instance, true)
   }
 
-  function edit(name: string, _data: any) {
+  function edit(name: string, data?: any) {
     const instance = _findInstance(name)
     _setActive(instance, true)
     _setUpdating(instance, true)
-    _setData(instance, _data)
+    _setData(instance, data)
     _setCreating(instance)
   }
 
